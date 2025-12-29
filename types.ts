@@ -33,6 +33,20 @@ export interface Client {
   industry: string;
 }
 
+export interface Contact {
+  id: string;
+  name: string;
+  role: string;
+  company: string;
+  email: string;
+  avatar?: string;
+  blueprintId?: string;
+  lastInteraction: string;
+  sentimentScore: number;
+  status: 'active' | 'nurture' | 'risk';
+  aiSummary?: string;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -41,6 +55,7 @@ export interface Project {
   updated_at: string;
   has_blueprint: boolean;
   description?: string;
+  intelligence?: ProjectIntelligence;
 }
 
 export interface ProjectPhase {
@@ -65,6 +80,54 @@ export interface Task {
   priority: TaskPriority;
   assignedTo?: string;
   dueDate?: string;
+}
+
+export interface IntelligenceAgent {
+  id: string;
+  name: string;
+  role: string;
+  whyNeeded: string;
+  produces: string;
+  confidence: number;
+}
+
+export interface IntelligenceAutomation {
+  id: string;
+  trigger: string;
+  action: string;
+  outcome: string;
+  riskLevel: 'Low' | 'Medium' | 'High';
+}
+
+export interface IntelligenceWorkflow {
+  id: string;
+  name: string;
+  steps: string[];
+  keyOutputs: string;
+}
+
+export interface IntelligenceJourney {
+  id: string;
+  actor: string;
+  steps: string[];
+  value: string;
+}
+
+export interface IntelligenceExample {
+  id: string;
+  scenario: string;
+  whatWasBuilt: string;
+  outcome: string;
+}
+
+export interface ProjectIntelligence {
+  agents: IntelligenceAgent[];
+  automations: IntelligenceAutomation[];
+  workflows: IntelligenceWorkflow[];
+  journeys: IntelligenceJourney[];
+  examples: IntelligenceExample[];
+  selectedItems: string[]; // Store IDs of selected items
+  generatedAt: string;
 }
 
 export interface WizardBlueprint {

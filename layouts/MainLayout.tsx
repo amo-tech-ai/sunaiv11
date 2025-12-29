@@ -1,10 +1,11 @@
 
 import React from 'react';
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useParams } from 'react-router-dom';
 import { ICONS, ROUTES } from '../constants';
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
+  const { projectId } = useParams<{ projectId: string }>();
 
   return (
     <div className="flex h-screen w-full bg-slate-50 overflow-hidden">
@@ -19,25 +20,36 @@ const MainLayout: React.FC = () => {
         <nav className="flex-1 p-4 space-y-2">
           <NavLink 
             to="/app/projects" 
-            className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${isActive && location.pathname.startsWith('/app/projects') && !location.pathname.includes('intelligence') ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
           >
             <ICONS.Layout className="w-5 h-5" />
             <span>Projects</span>
           </NavLink>
+
+          <NavLink 
+            to="/app/crm" 
+            className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${isActive && location.pathname === '/app/crm' ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+          >
+            <ICONS.Users className="w-5 h-5" />
+            <span>CRM</span>
+          </NavLink>
+
           <div className="pt-4 pb-2 px-4">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Intelligence</span>
           </div>
-          <button className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-slate-400 cursor-not-allowed italic">
+
+          <NavLink 
+            to={projectId ? ROUTES.PROJECT_INTELLIGENCE(projectId) : '#'} 
+            className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-colors ${!projectId ? 'text-slate-300 cursor-not-allowed opacity-50' : isActive ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50'}`}
+            onClick={(e) => !projectId && e.preventDefault()}
+          >
             <ICONS.Zap className="w-5 h-5" />
             <span>AI Insights</span>
-          </button>
+          </NavLink>
+
           <div className="pt-4 pb-2 px-4">
             <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Organization</span>
           </div>
-          <button className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
-            <ICONS.Users className="w-5 h-5" />
-            <span>Clients</span>
-          </button>
           <button className="w-full flex items-center space-x-3 px-4 py-2.5 rounded-lg text-slate-600 hover:bg-slate-50 transition-colors">
             <ICONS.Settings className="w-5 h-5" />
             <span>Settings</span>
@@ -63,7 +75,9 @@ const MainLayout: React.FC = () => {
           <div className="flex items-center space-x-2 text-sm text-slate-500">
             <span>App</span>
             <span>/</span>
-            <span className="font-medium text-slate-900">Projects</span>
+            <span className="font-medium text-slate-900">
+              {location.pathname.includes('intelligence') ? 'Intelligence' : location.pathname.includes('crm') ? 'CRM' : 'Projects'}
+            </span>
           </div>
           <div className="flex items-center space-x-4">
             <div className="h-8 w-8 bg-slate-100 rounded-full flex items-center justify-center">
@@ -91,8 +105,8 @@ const MainLayout: React.FC = () => {
                   <div key={i} className="flex space-x-3">
                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1.5 flex-shrink-0"></div>
                     <div>
-                      <p className="text-sm text-slate-800">Project <span className="font-medium">Acme SEO Plan</span> was updated to <span className="font-medium italic">Active</span>.</p>
-                      <p className="text-xs text-slate-400 mt-1">2 hours ago</p>
+                      <p className="text-sm text-slate-800">New Contact <span className="font-medium">Sarah Miller</span> was added via LinkedIn scan.</p>
+                      <p className="text-xs text-slate-400 mt-1">{i * 2} hours ago</p>
                     </div>
                   </div>
                 ))}
@@ -102,7 +116,7 @@ const MainLayout: React.FC = () => {
             <section className="bg-blue-50 rounded-xl p-4 border border-blue-100">
               <h3 className="text-sm font-semibold text-blue-900 mb-2">Platform Hint</h3>
               <p className="text-xs text-blue-700 leading-relaxed">
-                Create a new project to start the Wizard. The Blueprint generated will serve as the single source of truth for AI intelligence.
+                Relationship Intelligence identifies 'At Risk' clients by analyzing sentiment across all communication channels using Gemini 3 Pro.
               </p>
             </section>
           </div>

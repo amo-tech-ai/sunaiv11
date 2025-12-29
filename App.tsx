@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout';
@@ -5,6 +6,8 @@ import ProjectsDashboard from './pages/ProjectsDashboard';
 import ArchitectureOverview from './pages/ArchitectureOverview';
 import ProjectWizard from './pages/ProjectWizard';
 import ProjectExecutionPlan from './pages/ProjectExecutionPlan';
+import ProjectIntelligenceScreen from './pages/ProjectIntelligence';
+import CRMContacts from './pages/CRMContacts';
 import HomePage from './pages/HomePage';
 
 const App: React.FC = () => {
@@ -23,8 +26,11 @@ const App: React.FC = () => {
           <Route path="projects" element={<ProjectsDashboard />} />
           <Route path="projects/:projectId" element={<div className="p-10">Project Details (Placeholder)</div>} />
           <Route path="projects/:projectId/wizard" element={<ProjectWizard />} />
-          <Route path="projects/:projectId/intelligence" element={<div className="p-10 text-center">Intelligence (Placeholder)</div>} />
+          <Route path="projects/:projectId/intelligence" element={<ProjectIntelligenceScreen />} />
           <Route path="projects/:projectId/execution-plan" element={<ProjectExecutionPlan />} />
+          
+          {/* CRM Module */}
+          <Route path="crm" element={<CRMContacts />} />
         </Route>
 
         {/* Fallback */}
