@@ -1,7 +1,7 @@
 
 import React from 'react';
-
-export type IntelligenceTab = 'Agents' | 'Automations' | 'Workflows' | 'Journeys' | 'Examples';
+// Fixed: Use central IntelligenceTab definition from types file
+import { IntelligenceTab } from '../../types';
 
 interface IntelligenceTabsProps {
   activeTab: IntelligenceTab;

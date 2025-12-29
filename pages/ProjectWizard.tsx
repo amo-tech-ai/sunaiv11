@@ -8,7 +8,7 @@ import { scanWebsite } from '../services/retrieverService';
 
 // Sub-components
 import WizardStepNav from '../components/wizard/WizardStepNav';
-import LiveBlueprintPanel from '../components/wizard/LiveBlueprintPanel';
+import WizardRightPanel from '../components/wizard/WizardRightPanel';
 import Step1Basics from '../components/wizard/Step1Basics';
 import Step2Overview from '../components/wizard/Step2Overview';
 import Step3Constraints from '../components/wizard/Step3Constraints';
@@ -248,8 +248,8 @@ const ProjectWizard: React.FC = () => {
 
   return (
     <div className="flex h-[calc(100vh-160px)] w-full gap-8">
-      {/* LEFT: Navigation */}
-      <aside className="w-64 flex flex-col">
+      {/* LEFT PANEL: Wizard Navigation */}
+      <aside className="w-64 flex flex-col flex-shrink-0">
         <div className="flex-1">
           <WizardStepNav 
             currentStep={currentStep} 
@@ -278,15 +278,15 @@ const ProjectWizard: React.FC = () => {
         </div>
       </aside>
 
-      {/* CENTER: Main Content Area */}
-      <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden relative">
+      {/* MAIN PANEL: Wizard Step Content Area */}
+      <div className="flex-1 bg-white rounded-3xl border border-slate-200 shadow-sm flex flex-col overflow-hidden relative min-w-0">
         <div className="flex-1 overflow-y-auto p-12">
           {renderCurrentStep()}
         </div>
 
         {/* Footer Navigation */}
         {currentStep !== 5 && (
-          <footer className="h-28 border-t border-slate-100 px-12 flex items-center justify-between bg-white/95 backdrop-blur-xl sticky bottom-0 z-20">
+          <footer className="h-28 border-t border-slate-100 px-12 flex items-center justify-between bg-white/95 backdrop-blur-xl sticky bottom-0 z-20 flex-shrink-0">
             <div className="flex flex-col">
                <button 
                 onClick={currentStep === 1 ? () => navigate(ROUTES.PROJECTS) : prevStep}
@@ -342,7 +342,8 @@ const ProjectWizard: React.FC = () => {
         )}
       </div>
 
-      <LiveBlueprintPanel 
+      {/* RIGHT PANEL: Unified Tabbed Context/Blueprint DNA */}
+      <WizardRightPanel 
         blueprint={blueprint} 
         isSaving={isSaving} 
         feasibilityScore={feasibilityScore} 

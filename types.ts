@@ -1,4 +1,5 @@
 
+
 export enum ProjectStatus {
   DRAFT = 'Draft',
   WIZARD = 'In Wizard',
@@ -19,6 +20,9 @@ export enum TaskPriority {
   MEDIUM = 'Medium',
   HIGH = 'High'
 }
+
+// Added IntelligenceTab union type to be shared across components
+export type IntelligenceTab = 'Agents' | 'Automations' | 'Workflows' | 'Journeys' | 'Examples';
 
 export interface User {
   id: string;

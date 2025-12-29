@@ -195,11 +195,26 @@ const ProjectsDashboard: React.FC = () => {
                       <span>Stream Integrity</span>
                       <span>{config.progress}%</span>
                     </div>
-                    <div className="h-2 w-full bg-slate-50 rounded-full overflow-hidden border border-slate-100">
-                      <div 
-                        className="h-full bg-blue-600 transition-all duration-1000 ease-out" 
-                        style={{ width: `${config.progress}%` }} 
-                      />
+                    {/* Segmented Progress Bar */}
+                    <div className="flex gap-1 h-1.5 w-full">
+                      {[...Array(10)].map((_, i) => {
+                        const threshold = (i + 1) * 10;
+                        const isActive = config.progress >= threshold;
+                        const isCurrent = !isActive && config.progress > i * 10;
+                        
+                        return (
+                          <div 
+                            key={i}
+                            className={`flex-1 rounded-full transition-all duration-500 ${
+                              isActive 
+                                ? (config.progress === 100 ? 'bg-emerald-500' : 'bg-blue-600') 
+                                : isCurrent 
+                                  ? 'bg-blue-400 animate-pulse' 
+                                  : 'bg-slate-100 border border-slate-200/50'
+                            }`}
+                          />
+                        );
+                      })}
                     </div>
                   </div>
 
