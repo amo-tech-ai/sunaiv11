@@ -1,160 +1,83 @@
-# Sun AI Agency — Implementation Roadmap v1.0
+# Sun AI Agency — High-Fidelity Implementation Roadmap v1.2
 
 **Status:** ARCHITECTURE LOCKED  
-**Role:** Senior Product Architect  
-**Goal:** Transition from high-fidelity prototypes to a production-grade AI-orchestrated operations platform.
+**Strategic Goal:** Deploy an autonomous-first agency operating system governed by Human Controllers.
 
 ---
 
-## 1. Executive Summary: Current State vs. Target
-| Module | Current State | Target State | Gap |
-| :--- | :--- | :--- | :--- |
-| **Foundation** | 3-Panel Law implemented. Routing active. | Multi-tenant auth + Persistence. | Auth & DB Sync |
-| **CRM** | Intelligence Panels & Table UI. | Researcher Agent with real-time news grounding. | Grounding Tools |
-| **Wizard** | 6-Step Intake + Planner Agent logic. | Strategic WBS with resource conflict detection. | Code Execution |
-| **Execution** | Task List + Intelligence Sidebar. | Optimizer Agent for real-time task shortcuts. | RAG / Context |
-| **Automation** | Blueprint Doc. | Global Orchestration Hub & Ticker. | System Visibility |
+## 1. Feature → AI Mapping (Production Target)
+
+| Feature | Screen | Model | Gemini Tools | Agents | Inputs | Output | Approval |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Intake Research** | Wizard | G3 Pro | URL Context, Search | Retriever, Orchestrator | URL | Market Profile | Human |
+| **WBS Architecting** | Wizard | G3 Pro | Thinking, Struct. Output | Planner, Orchestrator | Goals, Budget | 4-Phase Plan | Human |
+| **Proposal Hero** | Dashboard | Nano Pro | Image Gen | Creative Director | Brand Voice | 16:9 Moodboard | Human |
+| **Budget Audit** | Right Panel | G3 Pro | Code Execution | Analyst | Task Costs | ROI Report | Human |
+| **Status Draft** | Chatbot | G3 Flash | Text Gen | Comms | Task Logs | Client Email | Human |
 
 ---
 
-## 2. System Architecture (Mermaid)
+## 2. Implementation Phases
+
+### Phase 1: The Grounding Layer (Weeks 1-2)
+*Focus: Connecting the platform to real-world data.*
+- [ ] **Task:** Wire `googleSearch` grounding to the CRM "Enrich" button.
+- [ ] **Task:** Implement `googleMaps` grounding for lead location mapping.
+- [ ] **UI:** Build the "Source Attribution" list in the Right Panel for all grounded claims.
+- **Acceptance:** Agent can cite 3 real-world news items for any URL entered.
+
+### Phase 2: The Thinking Engine (Weeks 3-4)
+*Focus: Deep architectural reasoning in the Wizard.*
+- [ ] **Task:** Implement `thinkingBudget: 16000` for Phase 5 of the Wizard.
+- [ ] **UI:** Build the "Thinking Terminal" to display reasoning logs to the user.
+- [ ] **Agent:** Orchestrator routes "Market Profile" -> "Planner" -> "WBS Output".
+- **Acceptance:** WBS handles complex budget-vs-deadline conflicts with 90% accuracy.
+
+### Phase 3: The Computational Core (Weeks 5-6)
+*Focus: Mathematical precision for agency health.*
+- [ ] **Task:** Implement `codeExecution` (Python) for the Analyst Agent.
+- [ ] **UI:** Create `AgencyVitals.tsx` with Recharts for burn-rate visualization.
+- [ ] **Task:** Implement `Scorer Agent` to compute global health (0-100) across all projects.
+- **Acceptance:** Burn-down charts are calculated via Python scripts, not simple frontend math.
+
+### Phase 4: Production Hardening (Weeks 7-8)
+*Focus: Persistence, Security, and Visual Fidelity.*
+- [ ] **Task:** Migrate from `localStorage` to **Supabase/Postgres**.
+- [ ] **Agent:** Deploy `Creative Director` to generate custom images for Proposals.
+- [ ] **Control:** Finalize the `Controller Gate` modal for all system mutations.
+- **Acceptance:** Project data persists across accounts; images match editorial brand voice.
+
+---
+
+## 3. Core Workflow: The Lead Accelerator
 
 ```mermaid
-graph TD
-    subgraph "Client Layer (React/Vite)"
-        UI[3-Panel Interface]
-        State[Blueprint State Management]
-    end
-
-    subgraph "Orchestration Layer (Gemini 3)"
-        ORC[Orchestrator Agent - Flash]
-        ORC --> PLA[Planner Agent - Pro Thinking]
-        ORC --> RES[Researcher Agent - Search Grounding]
-        ORC --> ANA[Analyst Agent - Code Exec]
-    end
-
-    subgraph "Data & Knowledge"
-        DB[(Local/Supabase DB)]
-        RAG[RAG Layer - Agency SOPs]
-    end
-
-    UI --> ORC
-    ORC --> RAG
-    ORC --> DB
-    PLA -->|Proposal| UI
-    ANA -->|Audit| UI
+flowchart TD
+    A[User adds URL to CRM] --> B[Orchestrator triggers Retriever]
+    B --> C[Retriever uses Google Search Grounding]
+    C --> D[Analyst Agent computes Market Signal]
+    D --> E[Right Panel: Proposed Lead Grade]
+    E --> F{Human Controller Approval}
+    F -->|Approved| G[Automated Draft Follow-up Created]
+    F -->|Rejected| H[Archive Signal]
 ```
 
 ---
 
-## 3. UI/UX Page Inventory
+## 4. Acceptance Tests (Given/When/Then)
 
-| Route | Screen | Purpose | Core Features |
-| :--- | :--- | :--- | :--- |
-| `/` | **Home Page** | Conversion & Pitch | Orbital UI, Methodology Reveal, CTA |
-| `/app/projects` | **Portfolio** | Ops Visibility | Stream Integrity Bars, Health Scores |
-| `/app/crm` | **Signals** | Relationship Intel | Scorer Agent, Grounded News, Follow-up Drafts |
-| `/app/wizard` | **Architect** | Intent Capture | Retriever Scan, Thinking Logs, WBS Preview |
-| `/app/execution` | **Command** | Task Velocity | Phase Navigation, Optimizer Recommendations |
-| `/app/vitals` | **Hub** | Strategy & ROI | Burn Rate Charts, Agent Activity Ticker |
+**Test: The Strategic Pivot**
+- **Given:** An active project with a 20% budget reduction.
+- **When:** User updates the budget constraint in the Execution Plan.
+- **Then:** **Optimizer Agent** (Pro) must run a reasoning loop and **propose** a re-prioritized WBS in the Right Panel.
+- **And:** No tasks are deleted until the **Human Controller** clicks "Commit Update".
 
 ---
 
-## 4. Feature Matrix (Core vs. Advanced)
+## 5. Verification Checklist (Can this ship today?)
+**Answer: NO.**
+- [ ] **Blocker:** `codeExecution` for budget audits is not yet implemented.
+- [ ] **Blocker:** `googleSearch` is currently mocked.
+- [ ] **Blocker:** Missing `Supabase` persistence layer.
 
-### 🧱 Core (Phase 1-2)
-- **3-Panel Layout:** Strict enforcement of Left (Nav) | Main (Work) | Right (Intel).
-- **Planner Agent:** Gemini 3 Pro reasoning to generate multi-phase WBS.
-- **Retriever Agent:** Background URL scanning for e-commerce/tech context.
-- **Scorer Agent:** Sentiment-based health calculation (0-100).
-
-### 🚀 Advanced (Phase 3-4)
-- **Deep Research:** `googleSearch` + `googleMaps` grounding for competitor mapping.
-- **Budget Audit:** `codeExecution` (Python) for precise SPI/CPI calculations.
-- **Multimodal Briefs:** `gemini-2.5-flash-image` generation for project moodboards.
-- **Agency RAG:** Integration of agency-specific SOPs and contracts via retrieval.
-
----
-
-## 5. User Journeys
-
-### Journey 1: The "Lead-to-Roadmap" Sprint
-1. **Trigger:** User adds a LinkedIn URL to CRM.
-2. **Researcher:** Agent grounds profile in recent funding news and market trends.
-3. **User Action:** Clicks "Generate Strategic Roadmap."
-4. **Planner:** Consumes research data and generates an 8-week execution plan.
-5. **Controller Gate:** Human reviews WBS, deletes 1 task, and clicks "Launch Project."
-
-### Journey 2: The "At-Risk" Intervention
-1. **Trigger:** Scorer Agent detects "Risk" status due to 10 days of communication silence.
-2. **Comms Agent:** Drafts a "Reassurance Email" based on project progress (75% complete).
-3. **User Action:** Clicks "Edit Draft," adds a personal note, and clicks "Approve & Send."
-4. **Outcome:** Relationship score recovers to 80%.
-
----
-
-## 6. Implementation Roadmap
-
-### Phase 1: Intelligence Grounding (Week 1-2)
-- [ ] Connect `googleSearch` to Researcher Agent in `crmService.ts`.
-- [ ] Implement `MarketReportView.tsx` for deep industry analysis.
-- [ ] Add citation links (Grounding Chunks) to the Intelligence Panels.
-
-### Phase 2: Strategic Orchestration (Week 3-4)
-- [ ] Implement `thinkingBudget` (8000 tokens) for the Planner Agent.
-- [ ] Build the "Thinking Terminal" UI to show agent reasoning logs.
-- [ ] Create multi-agent handoff logic (Researcher -> Planner).
-
-### Phase 3: Financial Control (Week 5-6)
-- [ ] Integrate `codeExecution` for the Analyst Agent in `projectGenerator.ts`.
-- [ ] Build `AgencyVitals.tsx` with Recharts for burn-down visibility.
-- [ ] Implement "Human-in-the-loop" approval buttons for all task commits.
-
-### Phase 4: Production Polish (Week 7-8)
-- [ ] Finalize responsive layouts for iPad/Pro tablets.
-- [ ] Implement global search across CRM and Projects.
-- [ ] Perform "Red Team" testing on agent prompt injections.
-
----
-
-## 7. Acceptance Tests (Given/When/Then)
-
-**Test 1: Project Intake Grounding**
-- **Given:** A valid e-commerce URL is entered in Step 1 of the Wizard.
-- **When:** The input is blurred.
-- **Then:** The Retriever Agent must pre-populate "Goals" with "Conversion Optimization" and "Integrations" with "Stripe."
-
-**Test 2: Risk Scoring Integrity**
-- **Given:** A contact has 0 interactions for 14 days.
-- **When:** The Scorer Agent runs analysis.
-- **Then:** The status must shift to "Risk" and the Right Panel must propose a "Follow-up" draft.
-
----
-
-## 8. Verification Checklist
-
-- [ ] **3-Panel Law:** No page has >3 panels or floating sidebars.
-- [ ] **Context Sync:** Selecting a row in Main always updates the Right panel.
-- [ ] **Thinking Budget:** Gemini 3 Pro has at least 4000 tokens for planning tasks.
-- [ ] **Safety:** No AI write actions occur without a "Human Approval" click.
-- [ ] **Grounding:** All external data includes source URLs from `groundingChunks`.
-- [ ] **Responsiveness:** Dashboard is usable on a 13" laptop without horizontal scroll.
-
----
-
-## 9. Real-World Use Cases
-
-1. **The Fast-Moving Growth Agency:** Uses the Wizard to spin up high-fidelity SEO roadmaps in 5 minutes instead of 5 hours.
-2. **The High-End Design Studio:** Uses the CRM News Grounding to start every client call with a "Recent Win" mention, increasing trust.
-3. **The Tech Ops Team:** Uses the Analyst Agent (Code Exec) to find resource leaks across 30 active project streams.
-
----
-
-## 10. Conclusion: Is this ready to ship?
-**Answer:** **NO.**  
-**Blockers:** 
-1. Real `googleSearch` wiring is currently mocked in `retrieverService.ts`.
-2. Python `codeExecution` is not yet implemented for the Budget Analyst.
-3. RAG layer (Vector DB) is missing for agency-specific SOP grounding.
-
-**Fix Steps:** Complete Phases 1 and 2 of this roadmap to reach "V1 Production" status.
+**Fix Steps:** Prioritize Phase 1 and 3 of this roadmap to unlock production utility.

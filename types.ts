@@ -1,5 +1,4 @@
 
-
 export enum ProjectStatus {
   DRAFT = 'Draft',
   WIZARD = 'In Wizard',
@@ -21,7 +20,6 @@ export enum TaskPriority {
   HIGH = 'High'
 }
 
-// Added IntelligenceTab union type to be shared across components
 export type IntelligenceTab = 'Agents' | 'Automations' | 'Workflows' | 'Journeys' | 'Examples';
 
 export interface User {
@@ -59,6 +57,7 @@ export interface Project {
   updated_at: string;
   has_blueprint: boolean;
   description?: string;
+  moodboard_url?: string;
   intelligence?: ProjectIntelligence;
 }
 
@@ -130,7 +129,7 @@ export interface ProjectIntelligence {
   workflows: IntelligenceWorkflow[];
   journeys: IntelligenceJourney[];
   examples: IntelligenceExample[];
-  selectedItems: string[]; // Store IDs of selected items
+  selectedItems: string[]; 
   generatedAt: string;
 }
 
@@ -155,7 +154,7 @@ export interface WizardBlueprint {
   artifacts?: {
     wbs: ProjectPhase[];
     riskAnalysis: RiskFactor[];
-    estimatedTimeline: number; // days
+    estimatedTimeline: number; 
   };
   meta: {
     step: number;

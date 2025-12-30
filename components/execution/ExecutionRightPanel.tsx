@@ -1,6 +1,8 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { ICONS } from '../../constants';
 import { Task, WizardBlueprint, TaskStatus } from '../../types';
+import { runRiskAudit, AuditResult } from '../../services/analystService';
 
 interface ExecutionRightPanelProps {
   activeTab: 'activity' | 'intelligence';
@@ -19,36 +21,34 @@ const ExecutionRightPanel: React.FC<ExecutionRightPanelProps> = ({
   tasks,
   onDeselect
 }) => {
+  const [isAuditing, setIsAuditing] = useState(false);
+  const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
+
   const completedCount = tasks.filter(t => t.status === TaskStatus.DONE).length;
-  const highPriorityLeft = tasks.filter(t => t.priority === 'High' && t.status !== TaskStatus.DONE).length;
   const progress = tasks.length > 0 ? Math.round((completedCount / tasks.length) * 100) : 0;
+
+  const handleRunAudit = async () => {
+    setIsAuditing(true);
+    try {
+      const result = await runRiskAudit(tasks, blueprint);
+      setAuditResult(result);
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsAuditing(false);
+    }
+  };
 
   return (
     <aside className="w-80 flex flex-col space-y-6 flex-shrink-0 animate-in slide-in-from-right duration-500 bg-white border border-slate-200 rounded-[2.5rem] overflow-hidden shadow-sm">
-      {/* Tabs Header */}
       <div className="flex border-b border-slate-100 p-2 bg-slate-50/50">
-        <button 
-          onClick={() => setActiveTab('activity')}
-          className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-            activeTab === 'activity' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Activity
-        </button>
-        <button 
-          onClick={() => setActiveTab('intelligence')}
-          className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${
-            activeTab === 'intelligence' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'
-          }`}
-        >
-          Ops Intel
-        </button>
+        <button onClick={() => setActiveTab('activity')} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === 'activity' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}>Activity</button>
+        <button onClick={() => setActiveTab('intelligence')} className={`flex-1 py-3 text-[10px] font-black uppercase tracking-widest rounded-xl transition-all ${activeTab === 'intelligence' ? 'bg-white shadow-sm text-slate-900 border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}>Ops Intel</button>
       </div>
 
       <div className="flex-1 overflow-y-auto custom-scrollbar p-6">
         {activeTab === 'activity' ? (
           <div className="space-y-8 animate-in fade-in duration-300">
-            {/* Global Project Health */}
             <section className="bg-slate-900 rounded-[2rem] p-6 text-white relative overflow-hidden shadow-xl">
               <div className="absolute top-0 right-0 w-24 h-24 bg-blue-600/20 blur-2xl -translate-y-8 translate-x-8" />
               <div className="relative z-10 space-y-3">
@@ -66,36 +66,35 @@ const ExecutionRightPanel: React.FC<ExecutionRightPanelProps> = ({
               </div>
             </section>
 
-            {/* Real-time Audit Trail */}
-            <section>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 px-2">Operational Log</h3>
-              <div className="space-y-6 px-2">
-                {[
-                  { action: 'Technical SEO Audit moved to Done', user: 'Alice', time: '12m ago' },
-                  { action: 'Assigned "Draft Landing Page" to Bob', user: 'System', time: '1h ago' },
-                  { action: 'Budget checkpoint: High Feasibility', user: 'Analyst Agent', time: '3h ago' },
-                ].map((log, i) => (
-                  <div key={i} className="flex space-x-4">
-                    <div className="w-1.5 h-1.5 rounded-full mt-2 bg-slate-200" />
-                    <div>
-                      <p className="text-xs text-slate-800 font-bold leading-relaxed">{log.action}</p>
-                      <p className="text-[9px] text-slate-400 font-black uppercase tracking-widest mt-0.5">{log.time} · {log.user}</p>
-                    </div>
-                  </div>
-                ))}
+            <button 
+              onClick={handleRunAudit}
+              disabled={isAuditing}
+              className="w-full py-4 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center space-x-2 hover:bg-emerald-100 transition-all shadow-sm"
+            >
+              <div className={isAuditing ? 'animate-spin' : ''}>
+                <ICONS.Zap className="w-3 h-3" />
               </div>
-            </section>
+              <span>{isAuditing ? 'Calculating ROI...' : 'Run Precision Audit'}</span>
+            </button>
 
-            {/* Platform Strategy */}
-            <section className="bg-blue-50/50 rounded-2xl border border-blue-100 p-5 mt-8">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center text-[10px] text-white font-black italic">i</div>
-                <h4 className="text-[10px] font-black text-blue-900 uppercase tracking-widest">Ops Optimization</h4>
-              </div>
-              <p className="text-[11px] text-blue-700 leading-relaxed font-medium">
-                The Principal Planner recommends completing the {highPriorityLeft} high-priority tasks first to clear architectural dependencies for Phase 02.
-              </p>
-            </section>
+            {auditResult && (
+              <section className="space-y-4 animate-in slide-in-from-top-4 duration-500">
+                <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                   <span className="text-[8px] font-black text-slate-400 uppercase mb-2 block">Python Project Logic</span>
+                   <div className="grid grid-cols-2 gap-4">
+                      <div>
+                         <span className="text-[10px] font-black text-slate-900 block">{auditResult.velocityScore}%</span>
+                         <span className="text-[8px] text-slate-400 uppercase">Velocity</span>
+                      </div>
+                      <div>
+                         <span className="text-[10px] font-black text-slate-900 block">{auditResult.riskLevel}</span>
+                         <span className="text-[8px] text-slate-400 uppercase">Risk</span>
+                      </div>
+                   </div>
+                   <p className="text-[10px] text-slate-500 font-medium leading-relaxed mt-3 italic">"{auditResult.reasoning}"</p>
+                </div>
+              </section>
+            )}
           </div>
         ) : (
           <div className="animate-in fade-in duration-300 h-full">
@@ -107,43 +106,15 @@ const ExecutionRightPanel: React.FC<ExecutionRightPanelProps> = ({
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" /></svg>
                    </button>
                 </header>
-
                 <section className="bg-slate-50 p-6 rounded-3xl border border-slate-100 space-y-4">
-                   <div>
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-widest border ${
-                        selectedTask.priority === 'High' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-slate-200 text-slate-600 border-slate-300'
-                      }`}>
-                        {selectedTask.priority} Priority
-                      </span>
-                      <h3 className="text-xl font-black text-slate-900 mt-3 leading-tight">{selectedTask.title}</h3>
-                   </div>
+                   <h3 className="text-xl font-black text-slate-900 leading-tight">{selectedTask.title}</h3>
                    <p className="text-xs text-slate-500 leading-relaxed font-medium">{selectedTask.description}</p>
                 </section>
-
-                <section className="bg-emerald-50 rounded-[2rem] border border-emerald-100 p-6">
-                   <div className="flex items-center space-x-2 mb-4">
-                      <div className="w-6 h-6 bg-emerald-600 rounded-lg flex items-center justify-center text-[10px] text-white font-black">AI</div>
-                      <h4 className="text-[10px] font-black text-emerald-900 uppercase tracking-widest">Optimizer Recommendation</h4>
-                   </div>
-                   <p className="text-xs font-bold text-emerald-800 leading-relaxed italic">
-                     "To accelerate this task, utilize the grounding context from the {blueprint?.identity.website || 'Client Website'}. Focus on high-impact keywords detected during the Retrieval phase."
-                   </p>
-                </section>
-
-                <div className="pt-4 px-2 space-y-3">
-                   <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Proposed Actions</span>
-                   <button className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl shadow-slate-200">
-                     Draft Implementation Guide
-                   </button>
-                   <button className="w-full py-4 border border-slate-200 text-slate-600 rounded-2xl font-black text-[9px] uppercase tracking-widest hover:bg-slate-50 transition-all">
-                     Recalculate Estimate
-                   </button>
-                </div>
               </div>
             ) : (
               <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30 grayscale py-20 px-4">
                 <ICONS.Layout className="w-12 h-12 text-slate-400" />
-                <p className="text-xs font-black uppercase tracking-widest max-w-[180px]">Select a task in the work area to view ops intelligence</p>
+                <p className="text-[10px] font-black uppercase tracking-widest max-w-[180px]">Select a task to view ops intelligence</p>
               </div>
             )}
           </div>

@@ -9,6 +9,8 @@ import ProjectExecutionPlan from './pages/ProjectExecutionPlan';
 import ProjectIntelligenceScreen from './pages/ProjectIntelligence';
 import CRMContacts from './pages/CRMContacts';
 import HomePage from './pages/HomePage';
+import ProposalFullView from './pages/ProposalFullView';
+import DeepResearchLab from './pages/DeepResearchLab';
 
 const App: React.FC = () => {
   return (
@@ -24,10 +26,11 @@ const App: React.FC = () => {
         <Route path="/app" element={<MainLayout />}>
           <Route index element={<Navigate to="/app/projects" replace />} />
           <Route path="projects" element={<ProjectsDashboard />} />
-          <Route path="projects/:projectId" element={<div className="p-10">Project Details (Placeholder)</div>} />
+          <Route path="research" element={<DeepResearchLab />} />
           <Route path="projects/:projectId/wizard" element={<ProjectWizard />} />
           <Route path="projects/:projectId/intelligence" element={<ProjectIntelligenceScreen />} />
           <Route path="projects/:projectId/execution-plan" element={<ProjectExecutionPlan />} />
+          <Route path="projects/:projectId/proposal" element={<ProposalFullView />} />
           
           {/* CRM Module */}
           <Route path="crm" element={<CRMContacts />} />
