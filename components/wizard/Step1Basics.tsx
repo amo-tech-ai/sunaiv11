@@ -17,14 +17,14 @@ const Step1Basics: React.FC<Step1BasicsProps> = ({ blueprint, updateSection, isS
           <span className="px-2 py-0.5 bg-blue-100 text-blue-600 text-[10px] font-black uppercase rounded">Step 01</span>
           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Intake Phase</span>
         </div>
-        <h2 className="text-4xl font-black text-slate-900 tracking-tight">Project Identity</h2>
+        <h2 className="text-4xl font-black text-slate-900 tracking-tight">Project Basics</h2>
         <p className="text-slate-500 mt-2 text-lg">Define the core signal for the AI Architect to analyze.</p>
       </header>
 
       <div className="space-y-8 max-w-2xl bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
         <div className="grid grid-cols-1 gap-8">
           <div>
-            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">What are we naming this operations stream?</label>
+            <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">What is this project called?</label>
             <input 
               type="text" 
               value={blueprint.identity.projectName}
@@ -36,7 +36,7 @@ const Step1Basics: React.FC<Step1BasicsProps> = ({ blueprint, updateSection, isS
 
           <div className="grid grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Client Entity</label>
+              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Client / Company name</label>
               <input 
                 type="text" 
                 value={blueprint.identity.clientName}
@@ -46,7 +46,7 @@ const Step1Basics: React.FC<Step1BasicsProps> = ({ blueprint, updateSection, isS
               />
             </div>
             <div className="relative">
-              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Primary URL (Optional)</label>
+              <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Main website (optional)</label>
               <input 
                 type="text" 
                 value={blueprint.identity.website}
@@ -58,7 +58,7 @@ const Step1Basics: React.FC<Step1BasicsProps> = ({ blueprint, updateSection, isS
               {isScanning && (
                 <div className="absolute right-4 bottom-4 flex items-center space-x-1.5 bg-blue-600 px-3 py-1.5 rounded-xl shadow-lg animate-in fade-in scale-in">
                   <div className="w-2 h-2 bg-white rounded-full animate-ping" />
-                  <span className="text-[10px] font-black text-white uppercase tracking-tighter">Retriever Scanning...</span>
+                  <span className="text-[10px] font-black text-white uppercase tracking-tighter">Research AI Scanning...</span>
                 </div>
               )}
             </div>
@@ -72,7 +72,7 @@ const Step1Basics: React.FC<Step1BasicsProps> = ({ blueprint, updateSection, isS
             </div>
             <div>
               <p className="text-xs font-bold text-green-800">Context Cached</p>
-              <p className="text-[10px] text-green-600 font-medium">The Retriever successfully mapped ${blueprint.identity.website} to industry patterns. Goals in the next step will be pre-populated.</p>
+              <p className="text-[10px] text-green-600 font-medium">The Research AI successfully mapped ${blueprint.identity.website} to industry patterns.</p>
             </div>
           </div>
         )}
@@ -81,7 +81,7 @@ const Step1Basics: React.FC<Step1BasicsProps> = ({ blueprint, updateSection, isS
       <div className="p-6 bg-blue-50/50 rounded-2xl border border-blue-100 flex items-center space-x-4 max-w-2xl">
         <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-blue-600 font-bold italic">i</div>
         <p className="text-xs text-blue-800 font-medium leading-relaxed">
-          The identity phase sets the grounding for our Large Language Models. Ensuring the Client Name matches official records helps the AI identify market competitors.
+          This step sets the grounding for our AI models. Ensuring names match official records helps identify competitors correctly.
         </p>
       </div>
     </div>

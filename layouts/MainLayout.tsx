@@ -1,41 +1,88 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Outlet, NavLink, useLocation, useParams, Link } from 'react-router-dom';
 import { ICONS, ROUTES } from '../constants';
-import { Project } from '../types';
-import GlobalAgentTicker from '../components/automation/GlobalAgentTicker';
+import { supabaseService } from '../services/supabaseService';
 
-const PROJECTS_STORAGE_KEY = 'sunai_projects_db';
+const ID_REGEX = /^[A-Za-z0-9_-]{4,32}$/;
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
-  const params = useParams();
+  const { projectId: urlProjectId } = useParams<{ projectId: string }>();
+  
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
+  const [isValidating, setIsValidating] = useState(false);
+  const [isUnauthorized, setIsUnauthorized] = useState(false);
+  const [copyFeedback, setCopyFeedback] = useState(false);
+
+  /**
+   * RESOLVER: Logic to determine which ID is the source of truth
+   * Hierarchy: URL > Storage > Null
+   */
+  const resolveContext = useCallback(async (id: string | null, isFromUrl: boolean) => {
+    if (!id || !ID_REGEX.test(id)) {
+      setActiveProjectId(null);
+      setIsUnauthorized(false);
+      return;
+    }
+
+    setIsValidating(true);
+    // AUTHORIZATION GUARD: Confirm project exists in user's tenant
+    const hasAccess = await supabaseService.verifyProjectAccess(id);
+    
+    if (hasAccess) {
+      setActiveProjectId(id);
+      setIsUnauthorized(false);
+      localStorage.setItem('sunai_last_project_id', id);
+    } else {
+      // If project not in DB...
+      if (isFromUrl) {
+        // If they specifically navigated to this ID, show "Project not selected"
+        setActiveProjectId(id);
+        setIsUnauthorized(true);
+      } else {
+        // If it was just a stale localStorage ID, clear it silently
+        setActiveProjectId(null);
+        setIsUnauthorized(false);
+        localStorage.removeItem('sunai_last_project_id');
+      }
+    }
+    setIsValidating(false);
+  }, []);
 
   useEffect(() => {
-    const urlId = params.projectId;
-    if (urlId) {
-      setActiveProjectId(urlId);
-      localStorage.setItem('sunai_last_project_id', urlId);
-    } else {
-      const savedId = localStorage.getItem('sunai_last_project_id');
-      if (savedId) setActiveProjectId(savedId);
+    const storedId = localStorage.getItem('sunai_last_project_id');
+    
+    if (urlProjectId) {
+      resolveContext(urlProjectId, true);
+    } else if (storedId && !activeProjectId) {
+      resolveContext(storedId, false);
     }
-  }, [params.projectId]);
+  }, [urlProjectId, resolveContext, activeProjectId]);
 
-  const getWizardPath = () => {
-    if (activeProjectId) return ROUTES.PROJECT_WIZARD(activeProjectId);
-    const newId = Math.random().toString(36).substr(2, 9);
-    return ROUTES.PROJECT_WIZARD(newId);
+  const handleCopyId = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!activeProjectId) return;
+    navigator.clipboard.writeText(activeProjectId);
+    setCopyFeedback(true);
+    setTimeout(() => setCopyFeedback(false), 2000);
   };
 
-  const getLinkClass = (isActive: boolean, isDisabled: boolean = false) => {
-    if (isDisabled) return "flex items-center space-x-3 px-4 py-2.5 rounded-lg text-slate-300 cursor-not-allowed opacity-50";
-    return `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
-      isActive 
-        ? 'bg-slate-900 text-white shadow-lg shadow-slate-200 font-bold' 
-        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
-    }`;
+  const getPageName = () => {
+    const segments = location.pathname.split('/');
+    const last = segments[segments.length - 1];
+    if (last === 'projects') return 'Projects';
+    if (last === 'crm') return 'Insights';
+    if (last === 'research') return 'Research';
+    if (last === 'orchestra') return 'AI Agents';
+    if (location.pathname.includes('wizard')) return 'Plan';
+    if (location.pathname.includes('execution-plan')) return 'Run';
+    return last;
+  };
+
+  // ROUTING SAFETY: Generates valid paths only if ID is present
+  const safePath = (routeFn: (id: string) => string) => {
+    return activeProjectId && !isUnauthorized ? routeFn(activeProjectId) : ROUTES.PROJECTS;
   };
 
   return (
@@ -43,42 +90,87 @@ const MainLayout: React.FC = () => {
       {/* SIDEBAR */}
       <aside className="w-64 bg-white border-r border-slate-200 flex flex-col hidden md:flex flex-shrink-0 shadow-sm">
         <div className="p-8 border-b border-slate-100">
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white shadow-lg">
-              <ICONS.Zap className="w-5 h-5" />
+          <Link to="/" className="flex flex-col space-y-1 group">
+            <div className="flex items-center space-x-2">
+              <div className="w-8 h-8 bg-slate-900 rounded-lg flex items-center justify-center text-white shadow-lg group-hover:scale-105 transition-transform">
+                <ICONS.Zap className="w-5 h-5" />
+              </div>
+              <h1 className="text-xl font-black tracking-tighter text-slate-900 uppercase leading-none">Sun AI</h1>
             </div>
-            <h1 className="text-xl font-black tracking-tighter text-slate-900 uppercase">Sun AI</h1>
+            
+            {/* GLOBAL CONTEXT ANCHOR */}
+            {(activeProjectId || isValidating) && (
+              <div className="mt-2.5 flex items-center justify-between group/id">
+                <div className="flex items-center space-x-2 animate-in fade-in slide-in-from-top-1 duration-500">
+                  <div 
+                    role="status"
+                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                      isValidating ? 'bg-slate-300 animate-pulse' : 
+                      isUnauthorized ? 'bg-red-500' : 'bg-blue-500 animate-pulse motion-reduce:animate-none'
+                    }`} 
+                  />
+                  <span className={`text-[10px] font-mono font-bold uppercase tracking-widest leading-none ${
+                    isUnauthorized ? 'text-red-500' : 'text-slate-400'
+                  }`}>
+                    {isValidating ? 'Verifying...' : isUnauthorized ? 'Project not selected' : `Project ID: ${activeProjectId}`}
+                  </span>
+                </div>
+                
+                {activeProjectId && !isValidating && !isUnauthorized && (
+                  <button 
+                    onClick={handleCopyId}
+                    title="Copy Project ID"
+                    className="opacity-0 group-hover/id:opacity-100 transition-opacity p-1 hover:bg-slate-100 rounded-md"
+                  >
+                    {copyFeedback ? (
+                      <ICONS.Check className="w-3 h-3 text-emerald-500" />
+                    ) : (
+                      <ICONS.Copy className="w-3 h-3 text-slate-400" />
+                    )}
+                  </button>
+                )}
+              </div>
+            )}
           </Link>
         </div>
         
         <nav className="flex-1 p-6 space-y-6 overflow-y-auto custom-scrollbar">
           <div className="space-y-1">
             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-2 block">Agency Suite</span>
-            <NavLink to="/app/projects" className={({ isActive }) => getLinkClass(isActive && location.pathname === '/app/projects')}>
+            <NavLink to="/app/projects" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>
               <ICONS.Layout className="w-5 h-5" />
               <span className="text-[11px] font-black uppercase tracking-widest">Projects</span>
             </NavLink>
-            <NavLink to="/app/research" className={({ isActive }) => getLinkClass(isActive && location.pathname === '/app/research')}>
-              <ICONS.Search className="w-5 h-5" />
-              <span className="text-[11px] font-black uppercase tracking-widest">Research Lab</span>
-            </NavLink>
-            <NavLink to="/app/crm" className={({ isActive }) => getLinkClass(isActive && location.pathname === '/app/crm')}>
+            <NavLink to="/app/crm" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>
               <ICONS.Users className="w-5 h-5" />
-              <span className="text-[11px] font-black uppercase tracking-widest">CRM</span>
+              <span className="text-[11px] font-black uppercase tracking-widest">Insights</span>
+            </NavLink>
+            <NavLink to="/app/research" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>
+              <ICONS.Search className="w-5 h-5" />
+              <span className="text-[11px] font-black uppercase tracking-widest">Research</span>
+            </NavLink>
+            <NavLink to="/app/orchestra" className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}>
+              <ICONS.Zap className="w-5 h-5" />
+              <span className="text-[11px] font-black uppercase tracking-widest">AI Agents</span>
             </NavLink>
           </div>
 
           <div className="space-y-1">
-            <div className="flex items-center justify-between px-4 mb-2">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Operational Context</span>
-            </div>
-            <NavLink to={getWizardPath()} className={({ isActive }) => getLinkClass(isActive && location.pathname.includes('wizard'))}>
-              <ICONS.Zap className="w-5 h-5" />
-              <span className="text-[11px] font-black uppercase tracking-widest">Architect</span>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest px-4 mb-2 block">Project Context</span>
+            <NavLink 
+              to={safePath(ROUTES.PROJECT_WIZARD)} 
+              className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${isActive && location.pathname.includes('wizard') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
+            >
+              <ICONS.Settings className="w-5 h-5" />
+              <span className="text-[11px] font-black uppercase tracking-widest">Plan</span>
             </NavLink>
-            <NavLink to={activeProjectId ? ROUTES.PROJECT_EXECUTION(activeProjectId) : '#'} className={({ isActive }) => getLinkClass(isActive && location.pathname.includes('execution'), !activeProjectId)} onClick={(e) => !activeProjectId && e.preventDefault()}>
+            <NavLink 
+              to={activeProjectId && !isUnauthorized ? ROUTES.PROJECT_EXECUTION(activeProjectId) : '#'} 
+              className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${(!activeProjectId || isUnauthorized) ? 'opacity-30 cursor-not-allowed text-slate-300' : isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
+              onClick={(e) => (!activeProjectId || isUnauthorized) && e.preventDefault()}
+            >
               <ICONS.Clipboard className="w-5 h-5" />
-              <span className="text-[11px] font-black uppercase tracking-widest">Execution</span>
+              <span className="text-[11px] font-black uppercase tracking-widest">Run</span>
             </NavLink>
           </div>
         </nav>
@@ -95,12 +187,34 @@ const MainLayout: React.FC = () => {
       </aside>
 
       {/* MAIN */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-white md:bg-slate-50/30 pb-12">
+      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto bg-white md:bg-slate-50/30">
         <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-10 sticky top-0 z-10 flex-shrink-0">
           <div className="flex items-center space-x-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">
-            <span>App</span>
+            <Link to="/app/projects" className="hover:text-slate-900 transition-colors">App</Link>
             <span>/</span>
-            <span className="text-slate-900">{location.pathname.split('/').pop()}</span>
+            <span className="text-slate-500">{getPageName()}</span>
+            {activeProjectId && (
+              <>
+                <span>/</span>
+                <div 
+                  className={`flex items-center space-x-2 px-2.5 py-1 rounded-md border font-mono font-bold transition-all ${
+                    isUnauthorized ? 'bg-red-50 border-red-100 text-red-600' : 'bg-blue-50 border-blue-100 text-blue-600'
+                  }`}
+                >
+                  <span>{isUnauthorized ? '!' : '#'}{activeProjectId}</span>
+                </div>
+              </>
+            )}
+          </div>
+          
+          <div className="flex items-center space-x-4">
+             <button className="p-2 text-slate-400 hover:text-slate-900 transition-colors">
+                <ICONS.MessageCircle className="w-5 h-5" />
+             </button>
+             <div className="w-px h-6 bg-slate-200" />
+             <button className="text-[10px] font-black uppercase tracking-widest text-slate-900 px-4 py-2 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all">
+                System: {isValidating ? 'Syncing...' : 'Online'}
+             </button>
           </div>
         </header>
 
@@ -108,8 +222,6 @@ const MainLayout: React.FC = () => {
           <Outlet />
         </div>
       </main>
-
-      <GlobalAgentTicker />
     </div>
   );
 };

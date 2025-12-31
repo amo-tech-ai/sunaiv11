@@ -11,6 +11,7 @@ import CRMContacts from './pages/CRMContacts';
 import HomePage from './pages/HomePage';
 import ProposalFullView from './pages/ProposalFullView';
 import DeepResearchLab from './pages/DeepResearchLab';
+import OrchestratorDashboard from './pages/OrchestratorDashboard';
 
 const App: React.FC = () => {
   return (
@@ -27,6 +28,7 @@ const App: React.FC = () => {
           <Route index element={<Navigate to="/app/projects" replace />} />
           <Route path="projects" element={<ProjectsDashboard />} />
           <Route path="research" element={<DeepResearchLab />} />
+          <Route path="orchestra" element={<OrchestratorDashboard />} />
           <Route path="projects/:projectId/wizard" element={<ProjectWizard />} />
           <Route path="projects/:projectId/intelligence" element={<ProjectIntelligenceScreen />} />
           <Route path="projects/:projectId/execution-plan" element={<ProjectExecutionPlan />} />

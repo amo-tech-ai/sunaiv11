@@ -19,7 +19,7 @@ const Step4Review: React.FC<Step4ReviewProps> = ({ blueprint, goToStep }) => {
           <div className="space-y-8">
             <section>
               <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-between">
-                <span>Project Identity</span>
+                <span>Project Basics</span>
                 <button onClick={() => goToStep(1)} className="text-blue-600 hover:underline">Edit</button>
               </h4>
               <div className="space-y-1">

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Contact } from '../../types';
 import { ICONS } from '../../constants';
@@ -61,7 +62,7 @@ const CRMRightPanel: React.FC<CRMRightPanelProps> = ({
 
             {/* Recent Activity Feed */}
             <section>
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Recent Orchestrations</h3>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Recent AI Actions</h3>
               <div className="space-y-6">
                 {[
                   { user: 'Sarah Miller', action: 'added via LinkedIn scan', time: '2 hours ago', color: 'bg-blue-500' },
@@ -85,10 +86,10 @@ const CRMRightPanel: React.FC<CRMRightPanelProps> = ({
             <section className="bg-blue-50/50 rounded-2xl border border-blue-100 p-5 mt-8">
               <div className="flex items-center space-x-2 mb-3">
                 <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center text-[10px] text-white font-black italic">i</div>
-                <h4 className="text-[10px] font-black text-blue-900 uppercase tracking-widest">Strategy Prompt</h4>
+                <h4 className="text-[10px] font-black text-blue-900 uppercase tracking-widest">Helpful Tip</h4>
               </div>
               <p className="text-[11px] text-blue-700 leading-relaxed font-medium">
-                Relationship Intelligence identifies 'At Risk' clients by analyzing sentiment patterns across communications using Gemini 3 Pro.
+                Insights identified 'At Risk' clients by analyzing patterns across communications using our Planning AI.
               </p>
             </section>
           </div>

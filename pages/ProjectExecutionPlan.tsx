@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
 import TaskList from '../components/TaskList';
 import ExecutionKanban from '../components/execution/ExecutionKanban';
+import ExecutionTimeline from '../components/execution/ExecutionTimeline';
 import { Task, TaskStatus, TaskPriority, WizardBlueprint } from '../types';
 import { ICONS } from '../constants';
 import ExecutionRightPanel from '../components/execution/ExecutionRightPanel';
@@ -93,7 +94,7 @@ const ProjectExecutionPlan: React.FC = () => {
           <div>
             <div className="flex items-center space-x-2 mb-1">
               <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black uppercase rounded">Execution Stream</span>
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">ID: {projectId}</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Project ID: {projectId}</span>
             </div>
             <h1 className="text-4xl font-black text-slate-900 tracking-tight leading-tight uppercase">
               {launchData?.launchBlueprint.identity.projectName || `Project Stream`}
@@ -129,10 +130,7 @@ const ProjectExecutionPlan: React.FC = () => {
           ) : viewMode === 'kanban' ? (
             <ExecutionKanban tasks={tasks} selectedTaskId={selectedTaskId} onTaskSelect={handleTaskSelection} onStatusChange={handleStatusChange} />
           ) : (
-            <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-30 grayscale border-2 border-dashed border-slate-200 rounded-[3rem]">
-              <ICONS.Layout className="w-16 h-16" />
-              <p className="text-xl font-editorial">Timeline View is architecting...</p>
-            </div>
+            <ExecutionTimeline tasks={tasks} blueprint={launchData?.launchBlueprint || null} onTaskSelect={handleTaskSelection} />
           )}
         </div>
       </div>

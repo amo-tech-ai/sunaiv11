@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Contact } from '../types';
@@ -143,7 +144,7 @@ const CRMContacts: React.FC = () => {
       <div className="flex-1 flex flex-col space-y-8 min-w-0">
         <header className="flex justify-between items-end flex-shrink-0">
           <div className="space-y-1">
-            <h1 className="text-5xl font-editorial text-slate-900 leading-tight tracking-tight uppercase">Signals</h1>
+            <h1 className="text-5xl font-editorial text-slate-900 leading-tight tracking-tight uppercase">Insights</h1>
             <p className="text-slate-500 font-medium">Monitoring relationship integrity across the agency vault.</p>
           </div>
           <button className="px-8 py-4 bg-slate-900 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-slate-800 shadow-2xl shadow-slate-200 transition-all active:scale-95 flex items-center space-x-3">

@@ -261,17 +261,17 @@ const ProjectWizard: React.FC = () => {
           <div className="absolute top-0 right-0 w-20 h-20 bg-blue-600/10 blur-3xl rounded-full" />
           <p className="text-[10px] text-slate-500 leading-relaxed font-black uppercase tracking-widest mb-3 flex items-center">
             <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-2 animate-pulse" />
-            Core Agent Status
+            AI Status
           </p>
           <div className="space-y-3">
              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-white font-bold">Retriever</span>
-                <span className="text-[9px] text-slate-400 font-black px-1.5 py-0.5 bg-slate-800 rounded uppercase">Ready</span>
+                <span className="text-[10px] text-white font-bold">Research AI</span>
+                <span className="text-[9px] text-slate-400 font-black px-1.5 py-0.5 bg-slate-800 rounded uppercase">(Ready)</span>
              </div>
              <div className="flex items-center justify-between">
-                <span className="text-[10px] text-white font-bold">The Planner</span>
+                <span className="text-[10px] text-white font-bold">Planning AI</span>
                 <span className={`text-[9px] font-black px-1.5 py-0.5 rounded uppercase ${currentStep >= 4 ? 'text-green-400 bg-green-400/10' : 'text-slate-400 bg-slate-800'}`}>
-                  {currentStep >= 4 ? 'Active' : 'Dormant'}
+                  ({currentStep >= 4 ? 'Active' : 'Idle'})
                 </span>
              </div>
           </div>
@@ -323,7 +323,7 @@ const ProjectWizard: React.FC = () => {
                   className="px-12 py-5 bg-blue-600 hover:bg-blue-700 text-white font-black rounded-2xl shadow-2xl shadow-blue-200 transition-all transform active:scale-95 flex items-center space-x-3 text-lg group"
                 >
                   <ICONS.Zap className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                  <span>Begin Architecting</span>
+                  <span>Begin Planning</span>
                 </button>
               ) : currentStep < 5 && (
                 <button 
@@ -331,7 +331,7 @@ const ProjectWizard: React.FC = () => {
                   disabled={currentStep === 1 && !blueprint.identity.projectName}
                   className="px-12 py-5 bg-slate-900 hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed text-white font-black rounded-2xl transition-all shadow-xl shadow-slate-200 flex items-center space-x-3 text-lg group"
                 >
-                  <span>Next Stream</span>
+                  <span>Next Step</span>
                   <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                   </svg>

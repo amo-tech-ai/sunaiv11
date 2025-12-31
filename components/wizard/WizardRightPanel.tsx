@@ -38,7 +38,7 @@ const WizardRightPanel: React.FC<WizardRightPanelProps> = ({ blueprint, isSaving
         {activeTab === 'activity' ? (
           <div className="space-y-8 animate-in fade-in duration-300">
             <header className="flex items-center justify-between">
-              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Context & Signals</h3>
+              <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Updates</h3>
               <div className="flex items-center space-x-1.5">
                 <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
                 <span className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Live Monitor</span>
@@ -47,11 +47,11 @@ const WizardRightPanel: React.FC<WizardRightPanelProps> = ({ blueprint, isSaving
 
             {/* Recent Activity Feed */}
             <section>
-              <h4 className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-6">Recent Orchestrations</h4>
+              <h4 className="text-[9px] font-black text-slate-300 uppercase tracking-widest mb-6">Recent AI Actions</h4>
               <div className="space-y-6">
                 {[
                   { action: 'Identity signal captured', time: 'Just now', color: 'bg-blue-500' },
-                  { action: 'Retriever scanned URL context', time: '2m ago', color: 'bg-emerald-500' },
+                  { action: 'Research AI scanned URL context', time: '2m ago', color: 'bg-emerald-500' },
                   { action: 'Feasibility analysis complete', time: '5m ago', color: 'bg-indigo-500' },
                 ].map((act, i) => (
                   <div key={i} className="flex space-x-4">
@@ -71,17 +71,17 @@ const WizardRightPanel: React.FC<WizardRightPanelProps> = ({ blueprint, isSaving
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-3">
                   <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center text-[10px] text-white font-black italic">i</div>
-                  <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest">System Hint</h4>
+                  <h4 className="text-[10px] font-black text-blue-400 uppercase tracking-widest">Helpful Tip</h4>
                 </div>
                 <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
-                  The AI Architect performs best when specific integrations are selected. This grounds the Work Breakdown Structure in real-world API logic.
+                  The Planning AI performs best when specific integrations are selected. This grounds the plan in real-world logic.
                 </p>
               </div>
             </section>
 
             {/* Audit Trail Placeholder */}
             <section className="pt-8 border-t border-slate-100">
-               <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-4">Integrity Log</span>
+               <span className="text-[9px] font-black text-slate-300 uppercase tracking-widest block mb-4">Change History</span>
                <div className="bg-slate-50 p-4 rounded-xl border border-slate-100 italic text-[10px] text-slate-400 font-medium leading-relaxed">
                  Waiting for step confirmation to commit architectural changes to the vault.
                </div>
@@ -173,7 +173,7 @@ const WizardRightPanel: React.FC<WizardRightPanelProps> = ({ blueprint, isSaving
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">System Ready</p>
                   </div>
                   <p className="text-xs font-bold leading-relaxed opacity-80">
-                    The AI Architect has sufficient context to build a high-fidelity execution plan.
+                    The Planning AI has sufficient context to build a high-fidelity execution plan.
                   </p>
                 </div>
               </div>
