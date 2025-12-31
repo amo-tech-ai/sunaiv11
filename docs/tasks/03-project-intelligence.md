@@ -3,8 +3,16 @@
 **Feature:** Project Intelligence & Risk Detection  
 **Priority:** P1  
 **Dependencies:** Execution plan, project data  
-**Status:** Not Started  
+**Status:** In Progress  
 **Estimated Effort:** 1.5 weeks
+
+---
+
+## 🟢 What's Already Complete
+- [x] **UI Surface:** `pages/ProjectIntelligence.tsx` implemented.
+- [x] **Service Layer:** `services/intelligenceService.ts` using Gemini 3 Pro reasoning.
+- [x] **Components:** `AgentCard`, `AutomationCard`, and `WorkflowCard` implemented.
+- [x] **Integration:** Blueprint DNA synced from Wizard to Intelligence panel.
 
 ---
 
@@ -17,8 +25,6 @@
 - Detect risks early (timeline, budget, scope, resources, quality).
 - Identify bottlenecks and optimization opportunities.
 - Generate predictions for delivery dates and budgets.
-
-**Why It's Important:** Enables proactive project management instead of reactive firefighting. By detecting risks early and providing actionable insights, project managers can prevent delays, budget overruns, and scope creep before they become critical issues.
 
 ---
 
@@ -53,25 +59,6 @@ graph TD
 | **Analyst** | `gemini-3-pro-preview` | `codeExecution` | Runs Python-based SPI/CPI audits on task completion data. |
 | **Optimizer** | `gemini-3-pro-preview` | `thinkingBudget: 12k` | Designs complex mitigation strategies for resource conflicts. |
 | **Scorer** | `gemini-3-flash-preview` | `structuredOutputs` | Consolidates multiple signals into a unified Health Score. |
-
----
-
-## 🛠 Key Features
-
-**Health Score:**
-- Overall score: 0-100 composite health score.
-- Components: Task completion, timeline variance, budget burn rate.
-- Display: Large score badge with color (Green: 70+, Yellow: 50-69, Red: <50).
-
-**Risk Radar:**
-- Visual: Radar chart showing risk areas.
-- Dimensions: Timeline, Budget, Scope, Resources, Quality.
-- Severity: Low, Medium, High per dimension.
-
-**Bottleneck Detection:**
-- Blocked tasks: Tasks waiting on other tasks.
-- Resource constraints: Overloaded team members.
-- Suggestions: Recommended actions to unblock.
 
 ---
 
