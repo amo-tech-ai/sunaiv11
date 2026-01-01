@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from 'react';
 import { Outlet, NavLink, useLocation, useParams, Link } from 'react-router-dom';
 import { ICONS, ROUTES } from '../constants';
@@ -8,7 +7,10 @@ const ID_REGEX = /^[A-Za-z0-9_-]{4,32}$/;
 
 const MainLayout: React.FC = () => {
   const location = useLocation();
-  const { projectId: urlProjectId } = useParams<{ projectId: string }>();
+  const params = useParams();
+  
+  // Detection logic: check directly for projectId in params
+  const urlProjectId = params.projectId;
   
   const [activeProjectId, setActiveProjectId] = useState<string | null>(null);
   const [isValidating, setIsValidating] = useState(false);
@@ -17,7 +19,6 @@ const MainLayout: React.FC = () => {
 
   /**
    * RESOLVER: Logic to determine which ID is the source of truth
-   * Hierarchy: URL > Storage > Null
    */
   const resolveContext = useCallback(async (id: string | null, isFromUrl: boolean) => {
     if (!id || !ID_REGEX.test(id)) {
@@ -27,7 +28,6 @@ const MainLayout: React.FC = () => {
     }
 
     setIsValidating(true);
-    // AUTHORIZATION GUARD: Confirm project exists in user's tenant
     const hasAccess = await supabaseService.verifyProjectAccess(id);
     
     if (hasAccess) {
@@ -74,7 +74,7 @@ const MainLayout: React.FC = () => {
     if (last === 'orchestra') return 'AI Agents';
     if (location.pathname.includes('wizard')) return 'Plan';
     if (location.pathname.includes('execution-plan')) return 'Run';
-    return last;
+    return last || 'Dashboard';
   };
 
   const safePath = (routeFn: (id: string) => string) => {
@@ -101,7 +101,7 @@ const MainLayout: React.FC = () => {
                     role="status"
                     className={`w-1.5 h-1.5 rounded-full transition-colors ${
                       isValidating ? 'bg-slate-300 animate-pulse' : 
-                      isUnauthorized ? 'bg-red-50' : 'bg-blue-500 animate-pulse motion-reduce:animate-none'
+                      isUnauthorized ? 'bg-red-400' : 'bg-blue-500 animate-pulse'
                     }`} 
                   />
                   <span className={`text-[10px] font-mono font-bold uppercase tracking-widest leading-none ${
@@ -161,7 +161,7 @@ const MainLayout: React.FC = () => {
             </NavLink>
             <NavLink 
               to={activeProjectId && !isUnauthorized ? ROUTES.PROJECT_EXECUTION(activeProjectId) : '#'} 
-              className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${(!activeProjectId || isUnauthorized) ? 'opacity-30 cursor-not-allowed text-slate-300' : isActive ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
+              className={({ isActive }) => `flex items-center space-x-3 px-4 py-2.5 rounded-lg transition-all ${(!activeProjectId || isUnauthorized) ? 'opacity-30 cursor-not-allowed text-slate-300' : isActive && location.pathname.includes('execution-plan') ? 'bg-slate-900 text-white shadow-md' : 'text-slate-600 hover:bg-slate-100'}`}
               onClick={(e) => (!activeProjectId || isUnauthorized) && e.preventDefault()}
             >
               <ICONS.Clipboard className="w-5 h-5" />
