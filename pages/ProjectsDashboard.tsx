@@ -28,7 +28,6 @@ const ProjectsDashboard: React.FC = () => {
 
   const handleCreateProject = () => {
     const newId = Math.random().toString(36).substr(2, 9);
-    // Explicitly set in localStorage before navigation for faster header sync
     localStorage.setItem('sunai_last_project_id', newId);
     navigate(ROUTES.PROJECT_WIZARD(newId));
   };
@@ -54,12 +53,12 @@ const ProjectsDashboard: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-100 pb-10">
         <div>
           <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.3em] mb-3 block">Operational Hub</span>
-          <h1 className="text-5xl font-editorial text-slate-900 leading-tight tracking-tight">Project Streams</h1>
+          <h1 className="text-5xl font-editorial text-slate-900 leading-tight tracking-tight uppercase">Projects</h1>
           <p className="text-slate-500 mt-2 font-medium">Monitoring {projects.length} active intelligence pipelines.</p>
         </div>
         <button onClick={handleCreateProject} className="px-8 py-4 bg-slate-900 text-white font-black text-xs uppercase tracking-[0.2em] rounded-2xl shadow-2xl shadow-slate-200 hover:bg-slate-800 transition-all flex items-center space-x-3">
           <ICONS.Plus className="w-5 h-5" />
-          <span>New Stream</span>
+          <span>New Project</span>
         </button>
       </div>
 
@@ -68,7 +67,7 @@ const ProjectsDashboard: React.FC = () => {
           <div className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-400"><ICONS.Search className="w-5 h-5" /></div>
           <input 
             type="text" 
-            placeholder="Search by project or client..." 
+            placeholder="Search by project name or client..." 
             value={searchQuery} 
             onChange={(e) => setSearchQuery(e.target.value)} 
             className="w-full pl-14 pr-6 py-4 bg-white border border-slate-200 rounded-[1.25rem] focus:ring-4 focus:ring-blue-100 outline-none transition-all font-medium text-slate-900 shadow-sm" 
@@ -80,8 +79,9 @@ const ProjectsDashboard: React.FC = () => {
         <div className="py-20 text-center animate-pulse text-slate-300 font-black uppercase tracking-widest">Gathering Signals...</div>
       ) : filteredProjects.length === 0 ? (
         <div className="py-32 flex flex-col items-center justify-center bg-slate-50 border-2 border-dashed border-slate-200 rounded-[3rem] text-center px-8">
-          <h3 className="text-3xl font-editorial text-slate-900 mb-3">No streams detected.</h3>
-          <button onClick={handleCreateProject} className="mt-8 px-10 py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl shadow-blue-100">Initialize First Project</button>
+          <h3 className="text-3xl font-editorial text-slate-900 mb-3 uppercase tracking-tight">No active projects</h3>
+          <p className="text-slate-400 max-w-xs mx-auto mb-8 font-medium">The pipeline is currently silent. Start a new engagement to begin architecting.</p>
+          <button onClick={handleCreateProject} className="px-10 py-4 bg-blue-600 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl shadow-blue-100">Initialize Project</button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -95,7 +95,7 @@ const ProjectsDashboard: React.FC = () => {
               >
                 <header className="flex items-center justify-between mb-8 relative z-10">
                   <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${config.color}`}>{config.label}</span>
-                  <div className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest">Project ID: {project.id}</div>
+                  <div className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-widest">ID: {project.id}</div>
                 </header>
                 <div className="space-y-2 mb-8 relative z-10">
                   <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">{project.client_name}</div>

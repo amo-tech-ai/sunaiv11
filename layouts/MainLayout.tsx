@@ -35,13 +35,10 @@ const MainLayout: React.FC = () => {
       setIsUnauthorized(false);
       localStorage.setItem('sunai_last_project_id', id);
     } else {
-      // If project not in DB...
       if (isFromUrl) {
-        // If they specifically navigated to this ID, show "Project not selected"
         setActiveProjectId(id);
         setIsUnauthorized(true);
       } else {
-        // If it was just a stale localStorage ID, clear it silently
         setActiveProjectId(null);
         setIsUnauthorized(false);
         localStorage.removeItem('sunai_last_project_id');
@@ -80,7 +77,6 @@ const MainLayout: React.FC = () => {
     return last;
   };
 
-  // ROUTING SAFETY: Generates valid paths only if ID is present
   const safePath = (routeFn: (id: string) => string) => {
     return activeProjectId && !isUnauthorized ? routeFn(activeProjectId) : ROUTES.PROJECTS;
   };
@@ -98,7 +94,6 @@ const MainLayout: React.FC = () => {
               <h1 className="text-xl font-black tracking-tighter text-slate-900 uppercase leading-none">Sun AI</h1>
             </div>
             
-            {/* GLOBAL CONTEXT ANCHOR */}
             {(activeProjectId || isValidating) && (
               <div className="mt-2.5 flex items-center justify-between group/id">
                 <div className="flex items-center space-x-2 animate-in fade-in slide-in-from-top-1 duration-500">
@@ -106,13 +101,13 @@ const MainLayout: React.FC = () => {
                     role="status"
                     className={`w-1.5 h-1.5 rounded-full transition-colors ${
                       isValidating ? 'bg-slate-300 animate-pulse' : 
-                      isUnauthorized ? 'bg-red-500' : 'bg-blue-500 animate-pulse motion-reduce:animate-none'
+                      isUnauthorized ? 'bg-red-50' : 'bg-blue-500 animate-pulse motion-reduce:animate-none'
                     }`} 
                   />
                   <span className={`text-[10px] font-mono font-bold uppercase tracking-widest leading-none ${
                     isUnauthorized ? 'text-red-500' : 'text-slate-400'
                   }`}>
-                    {isValidating ? 'Verifying...' : isUnauthorized ? 'Project not selected' : `Project ID: ${activeProjectId}`}
+                    {isValidating ? 'Verifying...' : isUnauthorized ? 'No Access' : `Project: ${activeProjectId}`}
                   </span>
                 </div>
                 
